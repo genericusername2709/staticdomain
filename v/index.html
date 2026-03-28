@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dearest Valentine</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="heart-bg"></div>
+        <div class="content">
+            <h1 class="main-title">Will you be my Valentine, Nafisa?</h1>
+            <p class="subtitle">So excited for our first Valentine's day together!</p>
+            <div class="buttons">
+                <button id="yesBtn" class="btn yes-btn">Yes, I'd love to! 💖</button>
+                <button id="noBtn" class="btn no-btn">No 😢</button>
+            </div>
+        </div>
+        <div id="celebration" class="hidden">
+            <h2>Yay! I love you so much, Nafisa! ❤️</h2>
+            <p class="message">But I am not in Kolkata to celebrate it with you 😢</p>
+            <p class="message">Maybe next year! <br /> Until then here is a countdown to when we will meet again!</p>
+            <div id="countdown">
+                <div class="time-block">
+                    <span id="days">00</span>
+                    <span class="label">Days</span>
+                </div>
+                <div class="time-block">
+                    <span id="hours">00</span>
+                    <span class="label">Hours</span>
+                </div>
+                <div class="time-block">
+                    <span id="minutes">00</span>
+                    <span class="label">Minutes</span>
+                </div>
+                <div class="time-block">
+                    <span id="seconds">00</span>
+                    <span class="label">Seconds</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
