@@ -59,13 +59,6 @@
             position: absolute;
             background: #fff;
             border-radius: 50%;
-            animation: twinkle 4s infinite alternate ease-in-out;
-        }
-
-        @keyframes twinkle {
-            0% { opacity: 0.1; transform: scale(0.5); box-shadow: none; }
-            50% { opacity: 0.8; }
-            100% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 8px #fff, 0 0 12px var(--nebula-blue); }
         }
 
         .card-wrapper {
@@ -77,12 +70,6 @@
             border-radius: 20px;
             background: linear-gradient(135deg, rgba(226, 192, 124, 0.4) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(138, 162, 255, 0.4) 100%);
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(255, 255, 255, 0.05);
-            animation: float 8s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
         }
 
         .card {
@@ -242,15 +229,15 @@
 </head>
 <body>
     <div class="galaxy-bg"></div>
-    <div class="stars-container" id="starsContainer"></div>
 
     <div class="card-wrapper">
         <div class="card">
+            <div id="inner-stars" style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none;"></div>
             <div class="celestial-border c1"></div>
             <div class="celestial-border c2"></div>
 
-            <div class="intro-text" id="family-intro">Officewala family cordially invites you to the</div>
-            <div class="highlight-text">Engagement</div>
+            <div class="intro-text" id="family-intro">Officewala family invites you to celebrate the</div>
+            <div class="highlight-text">Baarne</div>
             <div class="of-text">of</div>
             
             <div class="names" id="couple-names" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 3rem;">
@@ -284,31 +271,25 @@
     </div>
 
     <script>
-        // Generate a starry night background
-        const container = document.getElementById('starsContainer');
-        const starCount = 120;
+        // Generate a starry night background directly inside the card
+        const container = document.getElementById('inner-stars');
+        const starCount = 60; // Slightly fewer inside the card so it's elegantly balanced
 
         for (let i = 0; i < starCount; i++) {
             const star = document.createElement('div');
             star.classList.add('star');
             
-            // Randomize position
+            // Randomize position directly within the container limits smoothly
             const x = Math.random() * 100;
             const y = Math.random() * 100;
             
             // Randomize size between 1px and 3px
             const size = Math.random() * 2 + 1;
             
-            // Randomize animation duration and delay for realistic twinkling
-            const duration = Math.random() * 3 + 2; 
-            const delay = Math.random() * 5;
-
-            star.style.left = `${x}vw`;
-            star.style.top = `${y}vh`;
+            star.style.left = `${x}%`;
+            star.style.top = `${y}%`;
             star.style.width = `${size}px`;
             star.style.height = `${size}px`;
-            star.style.animationDuration = `${duration}s`;
-            star.style.animationDelay = `${delay}s`;
             
             // Occasionally make a star slightly blue or goldish in color based on size
             if (size > 2.5) {
@@ -328,8 +309,8 @@
         const coupleNames = document.getElementById('couple-names');
 
         if (familyParam === 's') {
-            document.title = "Engagement Invitation | Nafisa & Mustafa";
-            familyIntro.innerText = "Sadikot family cordially invites you to the";
+            document.title = "Baarne Invitation | Nafisa & Mustafa";
+            familyIntro.innerText = "Sadikot family invites you to celebrate the";
             coupleNames.innerHTML = `
                 Nafisa 
                 <span class="ampersand" style="margin: 0.4rem 0;">&</span> 
@@ -337,8 +318,8 @@
             `;
         } else {
             // Re-apply Officewala defaults explicitly in case they're needed programmitically, otherwise it defaults from HTML
-            document.title = "Engagement Invitation | Mustafa & Nafisa";
-            familyIntro.innerText = "Officewala family cordially invites you to the";
+            document.title = "Baarne Invitation | Mustafa & Nafisa";
+            familyIntro.innerText = "Officewala family invites you to celebrate the";
             coupleNames.innerHTML = `
                 Mustafa 
                 <span class="ampersand" style="margin: 0.4rem 0;">&</span> 
