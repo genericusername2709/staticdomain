@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engagement Invitation | Mustafa & Nafisa</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Montserrat:wght@200;300;400;500&display=swap');
+
+        :root {
+            --space-dark: #05060b;
+            --nebula-blue: #1c2b5e;
+            --nebula-purple: #3a1c5e;
+            --stardust: #e6e9ff;
+            --zodiac-gold: #e2c07c;
+            --card-glass: rgba(16, 18, 27, 0.5);
+            --border-glow: rgba(165, 180, 252, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--space-dark);
+            color: var(--stardust);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Deep space background gradients */
+        .galaxy-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, var(--nebula-purple) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, var(--nebula-blue) 0%, transparent 50%);
+            opacity: 0.6;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Star container for JS stars */
+        .stars-container {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 4s infinite alternate ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.1; transform: scale(0.5); box-shadow: none; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 8px #fff, 0 0 12px var(--nebula-blue); }
+        }
+
+        .card-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 90vw;
+            max-width: 440px;
+            padding: 1px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(226, 192, 124, 0.4) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(138, 162, 255, 0.4) 100%);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(255, 255, 255, 0.05);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .card {
+            background: var(--card-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 19px;
+            padding: 3rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border: 2px solid rgba(226, 192, 124, 0.6);
+            outline: 1px solid rgba(226, 192, 124, 0.2);
+            outline-offset: -8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .intro-text {
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+            text-transform: none;
+            color: var(--stardust);
+            margin-bottom: 0.8rem;
+            font-weight: 300;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .highlight-text {
+            color: var(--zodiac-gold);
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            letter-spacing: 3px;
+            display: block;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 15px rgba(226, 192, 124, 0.4);
+            text-transform: uppercase;
+        }
+
+        .of-text {
+            font-size: 0.7rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--stardust);
+            margin-bottom: 2rem;
+            opacity: 0.7;
+        }
+
+        .constellation-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+
+        .constellation-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .constellation {
+            filter: drop-shadow(0 0 8px rgba(226, 192, 124, 0.4));
+        }
+
+        .constellation-label {
+            font-family: 'Cinzel', serif;
+            font-size: 1.7rem;
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(226, 192, 124, 0.4);
+            font-weight: 500;
+            margin-top: 0.4rem;
+        }
+
+        .names {
+            font-family: 'Cinzel', serif;
+            font-size: 2.8rem;
+            line-height: 1.2;
+            margin-bottom: 2.5rem;
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(226, 192, 124, 0.3), 0 0 40px rgba(138, 162, 255, 0.2);
+            font-weight: 500;
+        }
+
+        .names .ampersand {
+            font-family: 'Cinzel', serif;
+            font-style: italic;
+            font-size: 2.2rem;
+            color: var(--zodiac-gold);
+            margin: 0 0.4rem;
+            opacity: 0.8;
+            display: inline-block;
+        }
+
+        .divider {
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--zodiac-gold), transparent);
+            margin-bottom: 2.5rem;
+            opacity: 0.6;
+        }
+
+        .details-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+            width: 100%;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--zodiac-gold);
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .detail-value {
+            font-family: 'Cinzel', serif;
+            font-size: 1.15rem;
+            font-weight: 400;
+            color: #ffffff;
+            letter-spacing: 1px;
+        }
+
+        .detail-sub {
+            font-size: 0.8rem;
+            color: #8c9ac9;
+            font-weight: 300;
+        }
+
+        /* Decorative celestial border elements */
+        .celestial-border {
+            position: absolute;
+            border: 1px solid rgba(226, 192, 124, 0.15);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        .c1 { top: -20px; left: -20px; width: 80px; height: 80px; }
+        .c2 { bottom: -30px; right: -30px; width: 120px; height: 120px; }
+
+    </style>
+</head>
+<body>
+    <div class="galaxy-bg"></div>
+    <div class="stars-container" id="starsContainer"></div>
+
+    <div class="card-wrapper">
+        <div class="card">
+            <div class="celestial-border c1"></div>
+            <div class="celestial-border c2"></div>
+
+            <div class="intro-text" id="family-intro">Officewala family cordially invites you to the</div>
+            <div class="highlight-text">Engagement</div>
+            <div class="of-text">of</div>
+            
+            <div class="names" id="couple-names" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 3rem;">
+                Mustafa 
+                <span class="ampersand" style="margin: 0.4rem 0;">&</span> 
+                Nafisa
+            </div>
+            
+            <div class="divider"></div>
+            
+            <div class="details-grid">
+                <div class="detail-item" style="gap: 0.3rem;">
+                    <span class="detail-label">When</span>
+                    <span class="detail-value">Saturday, April 11th, 2026</span>
+                    <span class="detail-sub" style="color: var(--zodiac-gold); font-size: 0.85rem; margin-bottom: 0.4rem;">24th Shawwal-al-Mukarram 1447</span>
+                    <span class="detail-value" style="font-size: 1.25rem;">7:30 PM</span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-label">Where</span>
+                    <a href="https://maps.app.goo.gl/Qxkoa931vxbnnUR5A" target="_blank" style="text-decoration: none; color: inherit; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                        <span class="detail-value" style="font-size: 1.05rem; text-align: center; line-height: 1.5; display: block;">
+                            Home@36, 36<br>
+                            Gulam Jilani Khan Road, Topsia<br>
+                            Kolkata
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generate a starry night background
+        const container = document.getElementById('starsContainer');
+        const starCount = 120;
+
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            
+            // Randomize position
+            const x = Math.random() * 100;
+            const y = Math.random() * 100;
+            
+            // Randomize size between 1px and 3px
+            const size = Math.random() * 2 + 1;
+            
+            // Randomize animation duration and delay for realistic twinkling
+            const duration = Math.random() * 3 + 2; 
+            const delay = Math.random() * 5;
+
+            star.style.left = `${x}vw`;
+            star.style.top = `${y}vh`;
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            star.style.animationDuration = `${duration}s`;
+            star.style.animationDelay = `${delay}s`;
+            
+            // Occasionally make a star slightly blue or goldish in color based on size
+            if (size > 2.5) {
+                star.style.backgroundColor = '#e6e9ff';
+            } else if (size < 1.5) {
+                star.style.backgroundColor = Math.random() > 0.5 ? '#fff' : '#e2c07c';
+            }
+
+            container.appendChild(star);
+        }
+
+        // Parse URL Parameters for dynamic family names
+        const urlParams = new URLSearchParams(window.location.search);
+        const familyParam = urlParams.get('f');
+
+        const familyIntro = document.getElementById('family-intro');
+        const coupleNames = document.getElementById('couple-names');
+
+        if (familyParam === 's') {
+            document.title = "Engagement Invitation | Nafisa & Mustafa";
+            familyIntro.innerText = "Sadikot family cordially invites you to the";
+            coupleNames.innerHTML = `
+                Nafisa 
+                <span class="ampersand" style="margin: 0.4rem 0;">&</span> 
+                Mustafa
+            `;
+        } else {
+            // Re-apply Officewala defaults explicitly in case they're needed programmitically, otherwise it defaults from HTML
+            document.title = "Engagement Invitation | Mustafa & Nafisa";
+            familyIntro.innerText = "Officewala family cordially invites you to the";
+            coupleNames.innerHTML = `
+                Mustafa 
+                <span class="ampersand" style="margin: 0.4rem 0;">&</span> 
+                Nafisa
+            `;
+        }
+    </script>
+</body>
+</html>
