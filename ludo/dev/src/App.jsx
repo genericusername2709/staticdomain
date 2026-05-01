@@ -5,15 +5,16 @@ import { performMove, calculateValidMoves } from './gameLogic';
 import { Dice1, Dice2, Dice3, Dice4, Dice5, Dice6, RotateCcw } from 'lucide-react';
 
 const DiceIcon = ({ value, rolling }) => {
-  if (rolling) return <RotateCcw className="animate-spin text-slate-400" size={32} />;
+  if (rolling) return <div className="dice-rolling" style={{ fontSize: '3rem' }}>🎲</div>;
+  const s = 64;
   switch (value) {
-    case 1: return <Dice1 size={32} />;
-    case 2: return <Dice2 size={32} />;
-    case 3: return <Dice3 size={32} />;
-    case 4: return <Dice4 size={32} />;
-    case 5: return <Dice5 size={32} />;
-    case 6: return <Dice6 size={32} />;
-    default: return <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#cbd5e1' }} />;
+    case 1: return <Dice1 size={s} />;
+    case 2: return <Dice2 size={s} />;
+    case 3: return <Dice3 size={s} />;
+    case 4: return <Dice4 size={s} />;
+    case 5: return <Dice5 size={s} />;
+    case 6: return <Dice6 size={s} />;
+    default: return <div style={{ width: s, height: s, borderRadius: '12px', background: '#f1f5f9', border: '2px dashed #cbd5e1' }} />;
   }
 };
 
@@ -195,11 +196,16 @@ const App = () => {
 
         <aside className="game-sidebar" style={{ position: 'relative', zIndex: 9999, background: '#fff', pointerEvents: 'all' }}>
           <div className="card status-card">
-            <p className="system-msg" style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#1e293b', marginBottom: '8px' }}>
+            <p className="system-msg" style={{ fontSize: '1.2rem', fontWeight: '900', color: '#1e293b', marginBottom: '12px' }}>
               {gameState.message}
             </p>
-            <div className={`player-badge ${myPlayer}`}>
-              You are: {myPlayer === 'red' ? '🔴 Red' : myPlayer === 'yellow' ? '🟡 Yellow' : '👁️ Spectator'}
+            <div className="flex flex-wrap gap-2">
+              <div className={`player-badge ${gameState.turn}`} style={{ fontWeight: 'bold' }}>
+                TURN: {gameState.turn?.toUpperCase()}
+              </div>
+              <div className={`player-badge ${myPlayer}`} style={{ opacity: 0.8 }}>
+                YOU: {myPlayer?.toUpperCase()}
+              </div>
             </div>
           </div>
 
@@ -217,28 +223,38 @@ const App = () => {
               </div>
             ) : (
               <div className="playing-area">
-                <div className="turn-indicator">
-                  Next: <span className={gameState.turn}>{(gameState.turn || '').toUpperCase()}</span>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: '24px', width: '100%' }}>
+                    <button
+                      className={`dice-btn ${rolling ? 'rolling' : ''} ${isMyTurnCheck ? 'active' : ''}`}
+                      onClick={() => handleRollDice()}
+                      disabled={!isMyTurnCheck || (gameState.dice !== null && gameState.dice !== undefined)}
+                      style={{
+                        width: 100,
+                        height: 100,
+                        fontSize: '2rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        position: 'relative',
+                        zIndex: 10001,
+                        border: isMyTurnCheck ? '4px solid #ef4444' : '4px solid #cbd5e1',
+                        background: '#fff',
+                        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                        flexShrink: 0
+                      }}
+                    >
+                      <DiceIcon value={gameState.dice} rolling={rolling} />
+                    </button>
+                    {gameState.dice && !rolling && (
+                      <div style={{ fontSize: '3.5rem', fontWeight: '900', color: '#1e293b', whiteSpace: 'nowrap' }} className="animate-pulse">
+                        = {gameState.dice}
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="flex flex-col items-center justify-center p-4 gap-2">
-                  <button
-                    className={`dice-btn ${rolling ? 'rolling' : ''} ${isMyTurnCheck ? 'active' : ''}`}
-                    onClick={() => handleRollDice()}
-                    disabled={!isMyTurnCheck || (gameState.dice !== null && gameState.dice !== undefined)}
-                    style={{
-                      width: 100,
-                      height: 100,
-                      fontSize: '2rem',
-                      position: 'relative',
-                      zIndex: 10001,
-                      border: isMyTurnCheck ? '4px solid #ef4444' : '4px solid #cbd5e1'
-                    }}
-                  >
-                    <DiceIcon value={gameState.dice} rolling={rolling} />
-                  </button>
-                </div>
-                {isMyTurnCheck && !gameState.dice && <div className="hint text-red-500 animate-bounce">Your turn! Roll the dice</div>}
-                {isMyTurnCheck && gameState.dice && <div className="hint text-blue-500 animate-pulse">Select a token to move</div>}
+                {isMyTurnCheck && !gameState.dice && <div className="hint text-red-500 animate-bounce font-bold mt-2" style={{ color: '#ef4444' }}>Your turn! Roll the dice</div>}
+                {isMyTurnCheck && gameState.dice && <div className="hint text-blue-500 animate-pulse font-bold mt-2" style={{ color: '#3b82f6' }}>Select a token to move</div>}
               </div>
             )}
           </div>
