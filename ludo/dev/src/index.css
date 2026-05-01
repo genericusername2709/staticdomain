@@ -227,12 +227,12 @@ body {
     border-top: 1px solid #f1f5f9;
     padding: 20px;
     flex: none;
-    display: flex;
-    flex-direction: column;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
-  .controls-card { order: 1; }
-  .status-card { order: 2; }
+  .controls-card { order: 1 !important; }
+  .status-card { order: 2 !important; }
 
   .dice-btn {
     width: 70px;

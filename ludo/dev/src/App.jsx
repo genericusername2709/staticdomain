@@ -195,11 +195,12 @@ const App = () => {
 
         <aside className="game-sidebar" style={{ position: 'relative', zIndex: 9999, background: '#fff', pointerEvents: 'all' }}>
           <div className="card status-card">
-            <h3>Game Status</h3>
+            <p className="system-msg" style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#1e293b', marginBottom: '8px' }}>
+              {gameState.message}
+            </p>
             <div className={`player-badge ${myPlayer}`}>
               You are: {myPlayer === 'red' ? '🔴 Red' : myPlayer === 'yellow' ? '🟡 Yellow' : '👁️ Spectator'}
             </div>
-            <p className="system-msg">{gameState.message}</p>
           </div>
 
           <div className="card controls-card" style={{ position: 'relative', zIndex: 10000 }}>
