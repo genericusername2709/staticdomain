@@ -1,9 +1,7 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { createGame } from '../firebase';
 
 export default function Lobby() {
-  const navigate = useNavigate();
 
   useEffect(() => {
     let auth = localStorage.getItem('uno_playerAuth');
@@ -15,9 +13,9 @@ export default function Lobby() {
     // Auto generate a random room and join it
     const newRoomId = Math.random().toString(36).substring(2, 8).toUpperCase();
     createGame(newRoomId, auth).then(() => {
-      navigate(`/game/${newRoomId}`, { replace: true });
+      window.location.hash = newRoomId;
     });
-  }, [navigate]);
+  }, []);
 
   return (
     <div className="lobby-container">

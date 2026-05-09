@@ -1,24 +1,31 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate, useParams } from 'react-router-dom';
 import Lobby from './components/Lobby';
 import GameBoard from './components/GameBoard';
 import './App.css';
 
 function App() {
+  const [roomId, setRoomId] = useState(window.location.hash.replace('#', ''));
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      setRoomId(window.location.hash.replace('#', ''));
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
   return (
-    <BrowserRouter basename="/uno">
-      <div className="app-container">
-        <Routes>
-          <Route path="/" element={<Lobby />} />
-          <Route path="/game/:roomId" element={<GameWrapper />} />
-        </Routes>
-      </div>
-    </BrowserRouter>
+    <div className="app-container">
+      {!roomId ? (
+        <Lobby />
+      ) : (
+        <GameWrapper roomId={roomId} />
+      )}
+    </div>
   );
 }
 
-function GameWrapper() {
-  const { roomId } = useParams();
+function GameWrapper({ roomId }) {
   const [playerAuth, setPlayerAuth] = useState(localStorage.getItem('uno_playerAuth'));
 
   useEffect(() => {
