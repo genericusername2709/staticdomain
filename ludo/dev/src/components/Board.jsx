@@ -2,12 +2,14 @@ import React from 'react';
 import { getTokenPosition, basePositions, isSafe, homePaths } from '../gameLogic';
 import { Star } from 'lucide-react';
 
-const Board = ({ gameState, myPlayer, onTokenClick }) => {
+const Board = ({ gameState, myPlayer, onTokenClick, roomData }) => {
   const cells = Array.from({ length: 225 }, (_, i) => {
     const row = Math.floor(i / 15);
     const col = i % 15;
     return { row, col };
   });
+
+  const activePlayers = ['red', 'green', 'yellow', 'blue'].filter(c => roomData?.players?.[c]);
 
   const renderTokens = (player) => {
     if (!gameState.tokens[player]) return null;
@@ -15,7 +17,8 @@ const Board = ({ gameState, myPlayer, onTokenClick }) => {
     // Group tokens by their derived grid coordinates to detect overlaps
     const positionsMap = {};
 
-    ['red', 'yellow'].forEach(p => {
+    ['red', 'green', 'yellow', 'blue'].forEach(p => {
+      if (!gameState.tokens[p]) return;
       gameState.tokens[p].forEach((pos, idx) => {
         if (pos === 57) return;
         let r, c;
@@ -60,12 +63,14 @@ const Board = ({ gameState, myPlayer, onTokenClick }) => {
       }
 
       const styles = {
-        gridColumn: c + 1,
-        gridRow: r + 1,
-        justifySelf: 'center',
-        alignSelf: 'center',
+        left: `calc(12px + var(--cell-size) * ${c} + var(--cell-size) * 0.1)`,
+        top: `calc(12px + var(--cell-size) * ${r} + var(--cell-size) * 0.1)`,
+        width: `calc(var(--cell-size) * 0.8)`,
+        height: `calc(var(--cell-size) * 0.8)`,
+        position: 'absolute',
         transform: `translate(${offset}px, ${offset}px)`,
-        zIndex: isHighlight ? 20 : 10 + myTokenSubIndex
+        zIndex: isHighlight ? 20 : 10 + myTokenSubIndex,
+        transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
       };
 
       return (
@@ -98,7 +103,7 @@ const Board = ({ gameState, myPlayer, onTokenClick }) => {
   };
 
   return (
-    <div className="board">
+    <div className="board" style={{ position: 'relative' }}>
       {cells.map(({ row, col }) => {
         if (row >= 6 && row <= 8 && col >= 6 && col <= 8) return null; // center handled separately
         if (row < 6 && col < 6) return null; // red base handled
@@ -148,7 +153,7 @@ const Board = ({ gameState, myPlayer, onTokenClick }) => {
 
       <div className="center" style={{ position: 'relative' }}>
         {/* Render finished tokens here */}
-        {['red', 'yellow', 'green', 'blue'].map(player => 
+        {['red', 'green', 'yellow', 'blue'].map(player => 
           gameState.tokens[player]?.map((pos, idx) => {
             if (pos !== 57) return null;
             
@@ -181,8 +186,7 @@ const Board = ({ gameState, myPlayer, onTokenClick }) => {
       </div>
 
       {/* Tokens */}
-      {renderTokens('red')}
-      {renderTokens('yellow')}
+      {['red', 'green', 'yellow', 'blue'].map(p => renderTokens(p))}
     </div>
   );
 };

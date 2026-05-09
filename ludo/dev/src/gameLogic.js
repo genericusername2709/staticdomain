@@ -33,7 +33,9 @@ export const basePositions = {
 
 export const START_OFFSETS = {
   red: 0,
-  yellow: 26
+  green: 13,
+  yellow: 26,
+  blue: 39
 };
 
 // Returns {row, col} or null if out of bounds (base is null here, handled separately)
@@ -103,19 +105,21 @@ export const performMove = (gameState, player, tokenIdx, diceValue) => {
     
     // Check if another player is on this square and it is NOT safe
     if (!isSafe(newCoord[0], newCoord[1])) {
-      let opponent = player === 'red' ? 'yellow' : 'red';
-      
-      // Iterate opponent tokens to see if they are killed
-      newState.tokens[opponent].forEach((oppPos, oppIdx) => {
-        if (oppPos > 0 && oppPos <= 51) {
-          let oppCoord = getTokenPosition(opponent, oppPos);
-          if (oppCoord[0] === newCoord[0] && oppCoord[1] === newCoord[1]) {
-            // KILL! Send to base
-            newState.tokens[opponent][oppIdx] = 0;
-            // Also giving an extra turn is a classic rule, we can just log it or pass it.
-            newState.message = `Oh snap! ${player.toUpperCase()} sent ${opponent.toUpperCase()} home!`;
-            newState.extraTurn = true; 
-          }
+      const allPlayers = ['red', 'green', 'yellow', 'blue'];
+      allPlayers.forEach(opponent => {
+        if (opponent !== player && newState.tokens[opponent]) {
+          // Iterate opponent tokens to see if they are killed
+          newState.tokens[opponent].forEach((oppPos, oppIdx) => {
+            if (oppPos > 0 && oppPos <= 51) {
+              let oppCoord = getTokenPosition(opponent, oppPos);
+              if (oppCoord && oppCoord[0] === newCoord[0] && oppCoord[1] === newCoord[1]) {
+                // KILL! Send to base
+                newState.tokens[opponent][oppIdx] = 0;
+                newState.message = `Oh snap! ${player.toUpperCase()} sent ${opponent.toUpperCase()} home!`;
+                newState.extraTurn = true; 
+              }
+            }
+          });
         }
       });
     }

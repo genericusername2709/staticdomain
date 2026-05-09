@@ -109,6 +109,8 @@ body {
 }
 .player-badge.red { background: #fee2e2; color: #ef4444; }
 .player-badge.yellow { background: #fef9c3; color: #eab308; }
+.player-badge.green { background: #dcfce7; color: #22c55e; }
+.player-badge.blue { background: #dbeafe; color: #3b82f6; }
 
 .system-msg {
   font-weight: 500;
@@ -138,6 +140,8 @@ body {
 
 .token.red { background: var(--red); }
 .token.yellow { background: var(--yellow); }
+.token.green { background: var(--green); }
+.token.blue { background: var(--blue); }
 
 .token.highlight {
   cursor: pointer;

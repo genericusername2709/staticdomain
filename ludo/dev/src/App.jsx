@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Board from './components/Board';
 import { subscribeToGame, createGame, joinGame, updateGameState } from './firebase';
 import { performMove, calculateValidMoves } from './gameLogic';
-import { Dice1, Dice2, Dice3, Dice4, Dice5, Dice6, RotateCcw } from 'lucide-react';
+import { Dice1, Dice2, Dice3, Dice4, Dice5, Dice6, RotateCcw, Copy } from 'lucide-react';
 
 const DiceIcon = ({ value, rolling }) => {
   if (rolling) return <div className="dice-rolling" style={{ fontSize: '3rem' }}>🎲</div>;
@@ -22,8 +22,13 @@ const App = () => {
   const [roomId, setRoomId] = useState(null);
   const [myPlayer, setMyPlayer] = useState(null);
   const [gameState, setGameState] = useState(null);
+  const [roomData, setRoomData] = useState(null);
   const [rolling, setRolling] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+
+  // Keep a ref to the latest roomData for closures
+  const roomDataRef = React.useRef(roomData);
+  useEffect(() => { roomDataRef.current = roomData; }, [roomData]);
 
   useEffect(() => {
     const hash = window.location.hash.replace('#', '');
@@ -37,13 +42,15 @@ const App = () => {
           await createGame(room, myId);
           return;
         }
+        setRoomData(state);
         setGameState(state.gameState);
-        if (state.players.red === myId) setMyPlayer('red');
-        else if (state.players.yellow === myId) setMyPlayer('yellow');
-        else if (!state.players.yellow) {
-          await joinGame(room, myId);
-          setMyPlayer('yellow');
-        } else setMyPlayer('spectator');
+        
+        const myColor = Object.keys(state.players || {}).find(c => state.players[c] === myId);
+        if (myColor) {
+          setMyPlayer(myColor);
+        } else {
+          setMyPlayer('spectator');
+        }
       });
     };
 
@@ -57,9 +64,15 @@ const App = () => {
 
   const handleStartGame = async () => {
     console.log("Starting game manually...");
+    const activeColors = ['red', 'green', 'yellow', 'blue'].filter(c => roomData?.players?.[c]);
+    if (activeColors.length < 1) {
+      showToast("Need at least 1 player to start!");
+      return;
+    }
     await updateGameState(roomId, {
       status: 'playing',
-      message: "Game Started! Red's turn."
+      turn: activeColors[0],
+      message: `Game Started! ${activeColors[0].toUpperCase()}'s turn.`
     });
   };
 
@@ -85,7 +98,9 @@ const App = () => {
     console.log("Rolled:", val, "Valid moves:", validMoves.length);
 
     if (validMoves.length === 0) {
-      nextTurn = myPlayer === 'red' ? 'yellow' : 'red';
+      const activeColors = ['red', 'green', 'yellow', 'blue'].filter(c => roomDataRef.current?.players?.[c]);
+      const currentIndex = activeColors.indexOf(myPlayer);
+      nextTurn = activeColors[(currentIndex + 1) % activeColors.length];
       newDice = null;
       msg = `No moves for ${myPlayer}. ${nextTurn}'s turn.`;
       showToast(`No valid moves with ${val}`);
@@ -100,7 +115,7 @@ const App = () => {
       const autoIdx = validMoves[0];
       const newState = performMove(gameState, myPlayer, autoIdx, val);
 
-      showToast(`${myPlayer.toUpperCase()} auto-moved token ${autoIdx + 1}`);
+      showToast(`${myPlayer.toUpperCase()} auto-moved ${val} steps`);
 
       // Short delay so they see the dice number first
       await new Promise(r => setTimeout(r, 800));
@@ -138,7 +153,9 @@ const App = () => {
         msg = "Rolled a 6! Roll again.";
       } else {
         console.log("PASS: Changing turn.");
-        nextTurn = player === 'red' ? 'yellow' : 'red';
+        const activeColors = ['red', 'green', 'yellow', 'blue'].filter(c => roomDataRef.current?.players?.[c]);
+        const currentIndex = activeColors.indexOf(player);
+        nextTurn = activeColors[(currentIndex + 1) % activeColors.length];
         msg = `${nextTurn.toUpperCase()}'s turn.`;
       }
 
@@ -170,17 +187,18 @@ const App = () => {
     await finalizeMove(newState, player, gameState.dice);
   };
 
-  if (!gameState) return (
+  if (!gameState || !roomData) return (
     <div className="flex items-center justify-center h-screen bg-slate-50">
       <div className="animate-pulse text-slate-500 font-medium">Syncing with Ludo Database...</div>
     </div>
   );
 
-  // Use a more robust check for turns
   const isMyTurnCheck = gameState &&
     myPlayer &&
     String(gameState.turn).toLowerCase() === String(myPlayer).toLowerCase() &&
     gameState.status === 'playing';
+
+  const myId = localStorage.getItem('playerId');
 
   return (
     <div className="game-layout">
@@ -191,7 +209,7 @@ const App = () => {
 
       <main className="game-main">
         <div className="board-wrapper" style={{ zIndex: 1, pointerEvents: 'auto' }}>
-          <Board gameState={gameState} myPlayer={myPlayer} onTokenClick={handleTokenClick} />
+          <Board gameState={gameState} myPlayer={myPlayer} onTokenClick={handleTokenClick} roomData={roomData} />
         </div>
 
         <aside className="game-sidebar" style={{ position: 'relative', zIndex: 9999, background: '#fff', pointerEvents: 'all' }}>
@@ -199,26 +217,70 @@ const App = () => {
             <p className="system-msg" style={{ fontSize: '1.2rem', fontWeight: '900', color: '#1e293b', marginBottom: '12px' }}>
               {gameState.message}
             </p>
-            <div className="flex flex-wrap gap-2">
-              <div className={`player-badge ${gameState.turn}`} style={{ fontWeight: 'bold' }}>
-                TURN: {gameState.turn?.toUpperCase()}
+            {gameState.status === 'playing' && (
+              <div className="flex flex-wrap gap-2">
+                <div className={`player-badge ${gameState.turn}`} style={{ fontWeight: 'bold' }}>
+                  TURN: {gameState.turn?.toUpperCase()}
+                </div>
+                {myPlayer !== 'spectator' && (
+                  <div className={`player-badge ${myPlayer}`} style={{ opacity: 0.8 }}>
+                    YOU: {myPlayer?.toUpperCase()}
+                  </div>
+                )}
               </div>
-              <div className={`player-badge ${myPlayer}`} style={{ opacity: 0.8 }}>
-                YOU: {myPlayer?.toUpperCase()}
-              </div>
-            </div>
+            )}
           </div>
 
           <div className="card controls-card" style={{ position: 'relative', zIndex: 10000 }}>
             {gameState.status === 'waiting' ? (
               <div className="waiting-area">
-                <p>Waiting for Player 2...</p>
-                {myPlayer === 'red' && (
-                  <button className="btn-primary" onClick={handleStartGame}>Start Solo</button>
+                <h3 style={{ marginBottom: '16px', fontWeight: 'bold', color: '#475569' }}>Select Your Color</h3>
+                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginBottom: '24px' }}>
+                   {['red', 'green', 'yellow', 'blue'].map(c => {
+                      const isTaken = !!roomData?.players?.[c];
+                      const isMine = myPlayer === c;
+                      return (
+                        <button 
+                           key={c}
+                           onClick={() => joinGame(roomId, myId, c)}
+                           disabled={isTaken && !isMine}
+                           style={{
+                             width: 48, height: 48, borderRadius: '50%',
+                             background: `var(--${c})`,
+                             opacity: (isTaken && !isMine) ? 0.2 : 1,
+                             border: isMine ? '4px solid #1e293b' : 'none',
+                             cursor: (isTaken && !isMine) ? 'not-allowed' : 'pointer',
+                             boxShadow: isMine ? '0 0 0 4px rgba(0,0,0,0.1)' : 'none',
+                             transition: 'all 0.2s'
+                           }}
+                        />
+                      );
+                   })}
+                </div>
+
+                {roomData?.creator === myId && (
+                  <button className="btn-primary" onClick={handleStartGame}>Start Game</button>
                 )}
-                <div className="share-link">
-                  <span>Share link to invite:</span>
-                  <input readOnly value={window.location.href} onClick={e => e.target.select()} />
+                
+                <div className="share-link" style={{ marginTop: '24px' }}>
+                  <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: '600' }}>Share link to invite:</span>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <input 
+                      readOnly 
+                      value={window.location.href} 
+                      onClick={e => e.target.select()} 
+                      style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#f8fafc', color: '#475569' }}
+                    />
+                    <button 
+                      onClick={() => {
+                        navigator.clipboard.writeText(window.location.href);
+                        showToast('Link copied!');
+                      }}
+                      style={{ padding: '8px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569' }}
+                    >
+                      <Copy size={20} />
+                    </button>
+                  </div>
                 </div>
               </div>
             ) : (
@@ -253,8 +315,8 @@ const App = () => {
                     )}
                   </div>
                 </div>
-                {isMyTurnCheck && !gameState.dice && <div className="hint text-red-500 animate-bounce font-bold mt-2" style={{ color: '#ef4444' }}>Your turn! Roll the dice</div>}
-                {isMyTurnCheck && gameState.dice && <div className="hint text-blue-500 animate-pulse font-bold mt-2" style={{ color: '#3b82f6' }}>Select a token to move</div>}
+                {isMyTurnCheck && !gameState.dice && <div className="hint text-red-500 animate-bounce font-bold mt-2" style={{ color: '#ef4444', textAlign: 'center' }}>Your turn! Roll the dice</div>}
+                {isMyTurnCheck && gameState.dice && <div className="hint text-blue-500 animate-pulse font-bold mt-2" style={{ color: '#3b82f6', textAlign: 'center' }}>Select a token to move</div>}
               </div>
             )}
           </div>

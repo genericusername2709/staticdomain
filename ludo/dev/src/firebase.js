@@ -29,34 +29,41 @@ export const createGame = async (roomId, initialPlayerAuth) => {
   if (!snap.exists()) {
     await set(gameRef, {
       players: {
-        red: initialPlayerAuth, // Red creates the game
-        yellow: null
+        red: null,
+        yellow: null,
+        green: null,
+        blue: null
       },
+      creator: initialPlayerAuth,
       gameState: {
         turn: 'red',
         dice: null,
         tokens: {
           red: [0, 0, 0, 0],
-          yellow: [0, 0, 0, 0]
+          yellow: [0, 0, 0, 0],
+          green: [0, 0, 0, 0],
+          blue: [0, 0, 0, 0]
         },
         status: 'waiting',
-        message: 'Waiting for Player 2 (Yellow) to join...'
+        message: 'Waiting for players to join...'
       }
     });
   }
 };
 
-export const joinGame = async (roomId, playerAuth) => {
+export const joinGame = async (roomId, playerAuth, color) => {
   const gameRef = ref(db, `games/${roomId}`);
   const snap = await get(gameRef);
   if (snap.exists()) {
     const data = snap.val();
-    if (!data.players.yellow && data.players.red !== playerAuth) {
-      await update(gameRef, {
-        'players/yellow': playerAuth,
-        'gameState/status': 'playing',
-        'gameState/message': 'Game Started! Red\'s turn.'
+    const players = data.players || {};
+    if (!players[color]) {
+      const updates = {};
+      Object.keys(players).forEach(c => {
+         if (players[c] === playerAuth) updates[`players/${c}`] = null;
       });
+      updates[`players/${color}`] = playerAuth;
+      await update(gameRef, updates);
     }
   }
 };
