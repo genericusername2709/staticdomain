@@ -76,6 +76,26 @@ const App = () => {
     });
   };
 
+  const handlePlayAgain = async () => {
+    const activeColors = ['red', 'green', 'yellow', 'blue'].filter(c => roomData?.players?.[c]);
+    if (activeColors.length < 1) {
+      showToast("Need players to start!");
+      return;
+    }
+    await updateGameState(roomId, {
+      status: 'playing',
+      turn: activeColors[0],
+      dice: null,
+      tokens: {
+        red: [0, 0, 0, 0],
+        yellow: [0, 0, 0, 0],
+        green: [0, 0, 0, 0],
+        blue: [0, 0, 0, 0]
+      },
+      message: `Game Restarted! ${activeColors[0].toUpperCase()}'s turn.`
+    });
+  };
+
   const handleRollDice = async () => {
     console.log("[Dice Clicked]");
     if (!gameState) { console.log("Aborting: No gameState"); return; }
@@ -317,6 +337,16 @@ const App = () => {
                 </div>
                 {isMyTurnCheck && !gameState.dice && <div className="hint text-red-500 animate-bounce font-bold mt-2" style={{ color: '#ef4444', textAlign: 'center' }}>Your turn! Roll the dice</div>}
                 {isMyTurnCheck && gameState.dice && <div className="hint text-blue-500 animate-pulse font-bold mt-2" style={{ color: '#3b82f6', textAlign: 'center' }}>Select a token to move</div>}
+                
+                {gameState.status === 'finished' && (
+                  <button 
+                    className="btn-primary mt-4" 
+                    onClick={handlePlayAgain} 
+                    style={{ background: '#22c55e', marginTop: '20px' }}
+                  >
+                    Play Again
+                  </button>
+                )}
               </div>
             )}
           </div>
