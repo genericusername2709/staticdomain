@@ -251,8 +251,9 @@ body {
 }
 
 .my-hand.my-turn {
-  box-shadow: 0 0 20px rgba(253, 216, 53, 0.5);
+  box-shadow: 0 0 20px rgba(67, 160, 71, 0.5);
 }
+
 
 .cards-container {
   display: flex;

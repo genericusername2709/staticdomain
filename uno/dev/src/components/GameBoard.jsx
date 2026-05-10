@@ -215,11 +215,17 @@ export default function GameBoard({ roomId, playerAuth }) {
 
   const topCard = gameState.discardPile ? gameState.discardPile[gameState.discardPile.length - 1] : null;
 
+  const formatMessage = (msg) => {
+    if (!msg || !mySlot) return msg;
+    return msg.replace(`${mySlot}'s turn`, "your turn");
+  };
+
+
   return (
     <div className="game-board">
       <div className="header">
         <h2>Room: {roomId}</h2>
-        <div className="status-msg">{gameState.message}</div>
+        <div className="status-msg">{formatMessage(gameState.message)}</div>
       </div>
 
       {gameState.status === 'waiting' && (
@@ -341,7 +347,7 @@ export default function GameBoard({ roomId, playerAuth }) {
       {gameState.status === 'finished' && (
         <div className="finished">
           <h2>Game Over</h2>
-          <p>{gameState.message}</p>
+          <p>{formatMessage(gameState.message)}</p>
         </div>
       )}
       
