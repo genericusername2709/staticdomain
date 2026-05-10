@@ -44,7 +44,7 @@ const App = () => {
         }
         setRoomData(state);
         setGameState(state.gameState);
-        
+
         const myColor = Object.keys(state.players || {}).find(c => state.players[c] === myId);
         if (myColor) {
           setMyPlayer(myColor);
@@ -82,17 +82,24 @@ const App = () => {
       showToast("Need players to start!");
       return;
     }
+
+    // Determine the next player to start the new game
+    const currentTurn = gameState?.turn;
+    const currentIndex = activeColors.indexOf(currentTurn);
+    const nextTurn = activeColors[(currentIndex + 1) % activeColors.length] || activeColors[0];
+
     await updateGameState(roomId, {
       status: 'playing',
-      turn: activeColors[0],
+      turn: nextTurn,
       dice: null,
+      extraTurn: null,
       tokens: {
         red: [0, 0, 0, 0],
         yellow: [0, 0, 0, 0],
         green: [0, 0, 0, 0],
         blue: [0, 0, 0, 0]
       },
-      message: `Game Restarted! ${activeColors[0].toUpperCase()}'s turn.`
+      message: `Game Restarted! ${nextTurn.toUpperCase()}'s turn.`
     });
   };
 
@@ -164,7 +171,7 @@ const App = () => {
 
       if (newState.extraTurn) {
         console.log("REWARD: Extra turn granted!");
-        delete newState.extraTurn;
+        newState.extraTurn = null;
         nextTurn = player; // Should already be player
         if (!msg.includes("Extra turn")) msg += " Extra turn!";
       } else if (diceUsed === 6) {
@@ -256,42 +263,42 @@ const App = () => {
               <div className="waiting-area">
                 <h3 style={{ marginBottom: '16px', fontWeight: 'bold', color: '#475569' }}>Select Your Color</h3>
                 <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginBottom: '24px' }}>
-                   {['red', 'green', 'yellow', 'blue'].map(c => {
-                      const isTaken = !!roomData?.players?.[c];
-                      const isMine = myPlayer === c;
-                      return (
-                        <button 
-                           key={c}
-                           onClick={() => joinGame(roomId, myId, c)}
-                           disabled={isTaken && !isMine}
-                           style={{
-                             width: 48, height: 48, borderRadius: '50%',
-                             background: `var(--${c})`,
-                             opacity: (isTaken && !isMine) ? 0.2 : 1,
-                             border: isMine ? '4px solid #1e293b' : 'none',
-                             cursor: (isTaken && !isMine) ? 'not-allowed' : 'pointer',
-                             boxShadow: isMine ? '0 0 0 4px rgba(0,0,0,0.1)' : 'none',
-                             transition: 'all 0.2s'
-                           }}
-                        />
-                      );
-                   })}
+                  {['red', 'green', 'yellow', 'blue'].map(c => {
+                    const isTaken = !!roomData?.players?.[c];
+                    const isMine = myPlayer === c;
+                    return (
+                      <button
+                        key={c}
+                        onClick={() => joinGame(roomId, myId, c)}
+                        disabled={isTaken && !isMine}
+                        style={{
+                          width: 48, height: 48, borderRadius: '50%',
+                          background: `var(--${c})`,
+                          opacity: (isTaken && !isMine) ? 0.2 : 1,
+                          border: isMine ? '4px solid #1e293b' : 'none',
+                          cursor: (isTaken && !isMine) ? 'not-allowed' : 'pointer',
+                          boxShadow: isMine ? '0 0 0 4px rgba(0,0,0,0.1)' : 'none',
+                          transition: 'all 0.2s'
+                        }}
+                      />
+                    );
+                  })}
                 </div>
 
                 {roomData?.creator === myId && (
                   <button className="btn-primary" onClick={handleStartGame}>Start Game</button>
                 )}
-                
+
                 <div className="share-link" style={{ marginTop: '24px' }}>
                   <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: '600' }}>Share link to invite:</span>
                   <div style={{ display: 'flex', gap: '8px' }}>
-                    <input 
-                      readOnly 
-                      value={window.location.href} 
-                      onClick={e => e.target.select()} 
+                    <input
+                      readOnly
+                      value={window.location.href}
+                      onClick={e => e.target.select()}
                       style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#f8fafc', color: '#475569' }}
                     />
-                    <button 
+                    <button
                       onClick={() => {
                         navigator.clipboard.writeText(window.location.href);
                         showToast('Link copied!');
@@ -337,11 +344,11 @@ const App = () => {
                 </div>
                 {isMyTurnCheck && !gameState.dice && <div className="hint text-red-500 animate-bounce font-bold mt-2" style={{ color: '#ef4444', textAlign: 'center' }}>Your turn! Roll the dice</div>}
                 {isMyTurnCheck && gameState.dice && <div className="hint text-blue-500 animate-pulse font-bold mt-2" style={{ color: '#3b82f6', textAlign: 'center' }}>Select a token to move</div>}
-                
+
                 {gameState.status === 'finished' && (
-                  <button 
-                    className="btn-primary mt-4" 
-                    onClick={handlePlayAgain} 
+                  <button
+                    className="btn-primary mt-4"
+                    onClick={handlePlayAgain}
                     style={{ background: '#22c55e', marginTop: '20px' }}
                   >
                     Play Again
