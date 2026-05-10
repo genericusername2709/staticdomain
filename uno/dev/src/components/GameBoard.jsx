@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { subscribeToGame, joinGame, updateGameState, setFullState } from '../firebase';
-import { generateDeck, isValidPlay, COLORS } from '../gameLogic';
+import { generateDeck, isValidPlay, COLORS, shuffle } from '../gameLogic';
 import UnoCard from './UnoCard';
 
 const SLOTS = ['player1', 'player2', 'player3', 'player4'];
@@ -150,23 +150,28 @@ export default function GameBoard({ roomId, playerAuth }) {
     if (gameState.turn !== mySlot || gameState.hasDrawn || gameState.drawPenalty > 0) return;
 
     let newDrawPile = [...gameState.drawPile];
+    let currentDiscardPile = [...gameState.discardPile];
     let newHands = { ...gameState.hands };
     
     if (newDrawPile.length === 0) {
-       const discard = [...gameState.discardPile];
-       const topCard = discard.pop();
-       newDrawPile = discard.sort(() => Math.random() - 0.5);
-       await updateGameState(roomId, { discardPile: [topCard] });
+       if (currentDiscardPile.length <= 1) return; // Cannot draw if no cards in discard either
+       const topCard = currentDiscardPile.pop();
+       newDrawPile = shuffle(currentDiscardPile);
+       currentDiscardPile = [topCard];
+       // Update discard pile immediately or in the final update
     }
 
-    const card = newDrawPile.shift();
-    newHands[mySlot] = [...newHands[mySlot], card];
+    if (newDrawPile.length > 0) {
+      const card = newDrawPile.shift();
+      newHands[mySlot] = [...newHands[mySlot], card];
 
-    await updateGameState(roomId, {
-      hands: newHands,
-      drawPile: newDrawPile,
-      hasDrawn: true,
-    });
+      await updateGameState(roomId, {
+        hands: newHands,
+        drawPile: newDrawPile,
+        discardPile: currentDiscardPile,
+        hasDrawn: true,
+      });
+    }
   };
 
   const handleDrawPenalty = async () => {
@@ -180,7 +185,7 @@ export default function GameBoard({ roomId, playerAuth }) {
       if (currentDrawPile.length === 0) {
         if (currentDiscardPile.length <= 1) break; 
         const topCard = currentDiscardPile.pop();
-        currentDrawPile = currentDiscardPile.sort(() => Math.random() - 0.5);
+        currentDrawPile = shuffle(currentDiscardPile);
         currentDiscardPile = [topCard];
       }
       if (currentDrawPile.length > 0) {

@@ -2,6 +2,15 @@ export const COLORS = ['Red', 'Yellow', 'Green', 'Blue'];
 export const VALUES = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Skip', 'Reverse', 'Draw Two'];
 export const WILD_CARDS = ['Wild', 'Wild Draw Four'];
 
+export const shuffle = (array) => {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+};
+
 export const generateDeck = () => {
   let deck = [];
   
@@ -22,13 +31,7 @@ export const generateDeck = () => {
     }
   }
 
-  // Shuffle deck
-  for (let i = deck.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [deck[i], deck[j]] = [deck[j], deck[i]];
-  }
-
-  return deck;
+  return shuffle(deck);
 };
 
 export const isValidPlay = (cardToPlay, currentTopCard, currentColor, drawPenalty = 0) => {
