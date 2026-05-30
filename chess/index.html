@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Chess</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="Main">
+        <div class="Game">
+            <div class="BoardContainer">
+                <div data-board="Board" class="Board" onclick="handleClick(event)"> 
+                    <div class="Row" data-row="8">
+                        <div class="Square Light" data-square="a8">
+                            <span class="RowLabel Label" data-rank="8">8</span>
+                        </div>
+                        <div class="Square Dark" data-square="b8"></div>
+                        <div class="Square Light" data-square="c8"></div>
+                        <div class="Square Dark" data-square="d8"></div>
+                        <div class="Square Light" data-square="e8"></div>
+                        <div class="Square Dark" data-square="f8"></div>
+                        <div class="Square Light" data-square="g8"></div>
+                        <div class="Square Dark" data-square="h8"></div>
+                    </div>
+                    <div class="Row" data-row="7">
+                        <div class="Square Dark" data-square="a7">
+                            <span class="RowLabel Label" data-rank="7">7</span>
+                        </div>
+                        <div class="Square Light" data-square="b7"></div>
+                        <div class="Square Dark" data-square="c7"></div>
+                        <div class="Square Light" data-square="d7"></div>
+                        <div class="Square Dark" data-square="e7"></div>
+                        <div class="Square Light" data-square="f7"></div>
+                        <div class="Square Dark" data-square="g7"></div>
+                        <div class="Square Light" data-square="h7"></div>
+                    </div>
+                    <div class="Row" data-row="6">
+                        <div class="Square Light" data-square="a6">
+                            <span class="RowLabel Label" data-rank="6">6</span>
+                        </div>
+                        <div class="Square Dark" data-square="b6"></div>
+                        <div class="Square Light" data-square="c6"></div>
+                        <div class="Square Dark" data-square="d6"></div>
+                        <div class="Square Light" data-square="e6"></div>
+                        <div class="Square Dark" data-square="f6"></div>
+                        <div class="Square Light" data-square="g6"></div>
+                        <div class="Square Dark" data-square="h6"></div>
+                    </div>
+                    <div class="Row" data-row="5">
+                        <div class="Square Dark" data-square="a5">
+                            <span class="RowLabel Label" data-rank="5">5</span>
+                        </div>
+                        <div class="Square Light" data-square="b5"></div>
+                        <div class="Square Dark" data-square="c5"></div>
+                        <div class="Square Light" data-square="d5"></div>
+                        <div class="Square Dark" data-square="e5"></div>
+                        <div class="Square Light" data-square="f5"></div>
+                        <div class="Square Dark" data-square="g5"></div>
+                        <div class="Square Light" data-square="h5"></div>
+                    </div>
+                    <div class="Row" data-row="4">
+                        <div class="Square Light" data-square="a4">
+                            <span class="RowLabel Label" data-rank="4">4</span>
+                        </div>
+                        <div class="Square Dark" data-square="b4"></div>
+                        <div class="Square Light" data-square="c4"></div>
+                        <div class="Square Dark" data-square="d4"></div>
+                        <div class="Square Light" data-square="e4"></div>
+                        <div class="Square Dark" data-square="f4"></div>
+                        <div class="Square Light" data-square="g4"></div>
+                        <div class="Square Dark" data-square="h4"></div>
+                    </div>
+                    <div class="Row" data-row="3">
+                        <div class="Square Dark" data-square="a3">
+                            <span class="RowLabel Label" data-rank="3">3</span>
+                        </div>
+                        <div class="Square Light" data-square="b3"></div>
+                        <div class="Square Dark" data-square="c3"></div>
+                        <div class="Square Light" data-square="d3"></div>
+                        <div class="Square Dark" data-square="e3"></div>
+                        <div class="Square Light" data-square="f3"></div>
+                        <div class="Square Dark" data-square="g3"></div>
+                        <div class="Square Light" data-square="h3"></div>
+                    </div>
+                    <div class="Row" data-row="2">
+                        <div class="Square Light" data-square="a2">
+                            <span class="RowLabel Label" data-rank="2">2</span>
+                        </div>
+                        <div class="Square Dark" data-square="b2"></div>
+                        <div class="Square Light" data-square="c2"></div>
+                        <div class="Square Dark" data-square="d2"></div>
+                        <div class="Square Light" data-square="e2"></div>
+                        <div class="Square Dark" data-square="f2"></div>
+                        <div class="Square Light" data-square="g2"></div>
+                        <div class="Square Dark" data-square="h2"></div>
+                    </div>
+                    <div class="Row" data-row="1">
+                        <div class="Square Dark" data-square="a1">
+                            <span class="RowLabel Label" data-rank="1">1</span>
+                            <span class="ColumnLabel Label" data-file="a">a</span>
+                        </div>
+                        <div class="Square Light" data-square="b1">
+                            <span class="ColumnLabel Label" data-file="b">b</span>
+                        </div>
+                        <div class="Square Dark" data-square="c1">
+                            <span class="ColumnLabel Label" data-file="c">c</span>
+                        </div>
+                        <div class="Square Light" data-square="d1">
+                            <span class="ColumnLabel Label" data-file="d">d</span>
+                        </div>
+                        <div class="Square Dark" data-square="e1">
+                            <span class="ColumnLabel Label" data-file="e">e</span>
+                        </div>
+                        <div class="Square Light" data-square="f1">
+                            <span class="ColumnLabel Label" data-file="f">f</span>
+                        </div>
+                        <div class="Square Dark" data-square="g1">
+                            <span class="ColumnLabel Label" data-file="g">g</span>
+                        </div>
+                        <div class="Square Light" data-square="h1">
+                            <span class="ColumnLabel Label" data-file="h">h</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="Controller">
+            <div class="SwitchColorsPanel" id="SwitchColorsPanel"></div>
+            <div id="restartDialog">
+                <p id="restartMessage"></p>
+                <button id="restartButton">Restart Game</button>
+            </div>
+            <div id="MoveHistory" class="MoveHistory"></div>
+        </div>
+    </div>
+    <dialog id="joinDialog">
+        <form method="dialog">
+            <label for="roomIdInput">Enter Room ID:</label>
+            <input type="text" id="roomIdInput" name="roomId" required>
+            <button type="submit">Join Game</button>
+        </form>
+    </dialog>
+    <script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-database-compat.js"></script>
+    <script type="module"> import { Chess } from 'https://cdn.jsdelivr.net/npm/chess.js@1.4/+esm'
+    window.chess = Chess;
+    </script>
+    <script src="firebase.js"></script>
+    <script src="pieceMap.js"></script>
+    <script src="gameLogic.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
