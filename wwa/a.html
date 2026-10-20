@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opening UPI App...</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      text-align: center;
+      padding: 40px 20px;
+      color: #222;
+      background-color: #f7f9fc;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #0070e0;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    .btn {
+      display: block;
+      padding: 14px 20px;
+      background: #0070e0;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      margin-top: 25px;
+      font-size: 16px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h2>Setting up UPI Mandate...</h2>
+    <div class="spinner" id="loader"></div>
+    <p>Please wait while we securely redirect you to your UPI application to approve the mandate.</p>
+
+    <!-- Crucial fallback button for WhatsApp in-app browser override -->
+    <a id="upi-mandate-btn" href="#" class="btn">Proceed to UPI App</a>
+  </div>
+
+  <script>
+    // 1. Paste your raw NPCI Mandate String here
+    // Ensure you use 'upi://mandate?...' instead of 'upi://pay?...'
+    const mandateString = "upi://mandate?pa=merchant@bank&pn=MerchantName&am=1000.00&amrule=MAX&mn=Subscription&tr=TXN123456&validitystart=20102026&validityend=20112026&amreco=100.00&recur=MONTHLY";
+
+    // Set the fallback link target immediately
+    const actionBtn = document.getElementById('upi-mandate-btn');
+    actionBtn.href = mandateString;
+
+    // 2. Automated Execution Logic
+    function triggerRedirect() {
+      // Use location.replace so the user doesn't loop backwards
+      window.location.replace(mandateString);
+
+      // Safety Fallback for strict browsers: 
+      // If location change fails silently, auto-click the button contextually after 500ms
+      setTimeout(() => {
+        actionBtn.click();
+      }, 500);
+    }
+
+    // Run automatically when the DOM loads
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      triggerRedirect();
+    } else {
+      window.addEventListener('DOMContentLoaded', triggerRedirect);
+    }
+  </script>
+
+</body>
+
+</html>
